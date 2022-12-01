@@ -14,7 +14,7 @@ const ALCHEMY_LINK = process.env.DEV_ALCHEMY
 const GOERLI_PRIVATE_KEY = process.env.DEV_WALLET
 
 module.exports = {
-  solidity: '0.8.9',
+  solidity: '0.8.15',
   networks: {
     goerli: {
       url: `${ALCHEMY_LINK}`,
