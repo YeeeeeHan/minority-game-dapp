@@ -1,0 +1,159 @@
+	"info": {
+		"_postman_id": "d7276af4-eafa-4c97-bfba-e219798f9a24",
+		"name": "books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10947783"
+	},
+	"item": [
+		{
+			"name": "/api/books/ (get all books)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWQ0ODZmYmZkNWZkYTA2NDhmMWMyMCIsImlhdCI6MTY2NzExMjc2OCwiZXhwIjoxNjY5NzA0NzY4fQ.iSvs4eRWzgyzdKHXoT8pJ52fFfJNMh7ZfdKF0lr4ghc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "yh",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "yh@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/books",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/books/ (create book)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWQ0ODZmYmZkNWZkYTA2NDhmMWMyMCIsImlhdCI6MTY2NzExMjc2OCwiZXhwIjoxNjY5NzA0NzY4fQ.iSvs4eRWzgyzdKHXoT8pJ52fFfJNMh7ZfdKF0lr4ghc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "titanic",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/books",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/books/:id (get book by id)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWQ0ODZmYmZkNWZkYTA2NDhmMWMyMCIsImlhdCI6MTY2NzExMjc2OCwiZXhwIjoxNjY5NzA0NzY4fQ.iSvs4eRWzgyzdKHXoT8pJ52fFfJNMh7ZfdKF0lr4ghc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "yh",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "yh@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/books/:id",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"books",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "635aade9f07911ba61efef6c"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

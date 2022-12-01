@@ -1,0 +1,80 @@
+{
+	"info": {
+		"_postman_id": "4c9a483f-222b-41ce-b0ff-8b62cb0b32da",
+		"name": "goals",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10947783"
+	},
+	"item": [
+		{
+			"name": "/api/goals/   (get goals)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWQ0ODZmYmZkNWZkYTA2NDhmMWMyMCIsImlhdCI6MTY2NzExMjc2OCwiZXhwIjoxNjY5NzA0NzY4fQ.iSvs4eRWzgyzdKHXoT8pJ52fFfJNMh7ZfdKF0lr4ghc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/goals/",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"goals",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/goals/   (create goals)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWQ0ODZmYmZkNWZkYTA2NDhmMWMyMCIsImlhdCI6MTY2NzExMjc2OCwiZXhwIjoxNjY5NzA0NzY4fQ.iSvs4eRWzgyzdKHXoT8pJ52fFfJNMh7ZfdKF0lr4ghc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "text",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/goals/",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"goals",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

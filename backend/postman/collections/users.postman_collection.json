@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "301cde77-ff95-4e4f-ae9a-858ef5580692",
+		"name": "users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10947783"
+	},
+	"item": [
+		{
+			"name": "/api/users/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "yh@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/users/login",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users/  (register)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "yh",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "yh@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/users/",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users/me",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWQ0ODZmYmZkNWZkYTA2NDhmMWMyMCIsImlhdCI6MTY2NzExMjc2OCwiZXhwIjoxNjY5NzA0NzY4fQ.iSvs4eRWzgyzdKHXoT8pJ52fFfJNMh7ZfdKF0lr4ghc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "yh",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "yh@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE URL}}:{{PORT}}/api/users/me",
+					"host": [
+						"{{BASE URL}}"
+					],
+					"port": "{{PORT}}",
+					"path": [
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
