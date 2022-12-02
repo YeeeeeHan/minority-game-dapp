@@ -52,7 +52,7 @@ contract MinorityGame {
 
     // Vote is called by participants to commit their votes (and pay)
     function vote(bytes32 commitHash) public payable {
-        console.log("[DEBUG] msg.value: %s", msg.value);
+        console.log("[DEBUG vote] msg.value: %s", msg.value);
 
         //ticket price equals to amount entered
         require(msg.value == ticketPrice * 1 gwei, 'msg.value does not equal ticketPrice');
@@ -63,7 +63,7 @@ contract MinorityGame {
         // Add commitHash to commitMap
         commitMap[commitHash] = true;
 
-        console.log("[DEBUG] Voter: %s", msg.sender);
+        console.log("[DEBUG vote] Voter: %s", msg.sender);
     }
 
     // Revert function that is called when game fails for any reason
@@ -71,6 +71,7 @@ contract MinorityGame {
         for (uint i; i < players.length; i++) {
             players[i].transfer(ticketPrice * 1 gwei);
         }
+        console.log("[DEBUG emergencyRepay] emergencyRepay END");
         return;
     }
 
@@ -81,7 +82,7 @@ contract MinorityGame {
     function reveal(Vote[] memory votes) payable onlyGameMaster external resetContractState {
         // First check - length of players
         if (players.length != votes.length) {
-            console.log("[DEBUG] Number of votes != number of players, emergency repay");
+            console.log("[DEBUG reveal] Number of votes != number of players, emergency repay");
             emergencyRepay();
             return;
         }
@@ -95,7 +96,7 @@ contract MinorityGame {
                 opt1.push(payable(votes[i]._address));
             }
             else {
-                console.log("[DEBUG] Unexpected vote data, emergency repay");
+                console.log("[DEBUG reveal] Unexpected vote data, emergency repay");
                 emergencyRepay();
                 return;
             }
@@ -105,7 +106,7 @@ contract MinorityGame {
 
             // Check if present in commitMap
             if (commitMap[_hash] != true) {
-                console.log("[DEBUG] Commit hash not found, emergency repay");
+                console.log("[DEBUG reveal] Commit hash not found, emergency repay");
                 // Fault in commit-reveal scheme
                 emergencyRepay();
                 return;
@@ -115,16 +116,16 @@ contract MinorityGame {
 
         // Option 1 is the minority, payout to players that chose option 1
         if (opt0.length > opt1.length) {
-            console.log("[DEBUG] opt1 wins");
+            console.log("[DEBUG reveal] opt1 wins");
             distributePrize(opt1);
         }
         // Option 0 is the minority, payout to players that chose option 0
         else if (opt0.length < opt1.length) {
-            console.log("[DEBUG] opt0 wins");
+            console.log("[DEBUG reveal] opt0 wins");
             distributePrize(opt0);
         }
         else {
-            console.log("[DEBUG] neither op0 nor op1 wins, emergency repay");
+            console.log("[DEBUG reveal] neither op0 nor op1 wins, emergency repay");
             emergencyRepay();
             return;
         }
@@ -146,7 +147,7 @@ contract MinorityGame {
         gameMaster.transfer(commission);
 
         uint winningAmount = (address(this).balance) / winners.length;
-        console.log("[DEBUG] winningAmount: %s", winningAmount);
+        console.log("[DEBUG distributePrize] winningAmount: %s", winningAmount);
 
         for (uint i; i < winners.length; i++) {
             winners[i].transfer(winningAmount);
