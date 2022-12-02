@@ -2,6 +2,7 @@ const {expect} = require("chai");
 const {loadFixture} = require("@nomicfoundation/hardhat-network-helpers");
 
 const ticketPriceGwei = 100000000
+const ticketPriceWei = ethers.utils.parseUnits(ticketPriceGwei.toString(), "gwei")
 
 describe("Token contract", function () {
     async function deployContractFixture() {
@@ -51,7 +52,7 @@ describe("Token contract", function () {
         });
 
         it("resetContractState should increase qid", async function () {
-            const {contractInstance, owner, addr1} = await loadFixture(deployContractFixture);
+            const {contractInstance, owner} = await loadFixture(deployContractFixture);
             expect(await contractInstance.qid()).to.equal(1);
             await contractInstance.connect(owner).emergencyRepay()
             let newQid = await contractInstance.qid()
@@ -80,45 +81,70 @@ describe("Token contract", function () {
 
         it("Vote should add voter to players array, and add hash to commitHash", async function () {
             const {contractInstance, addr1, addr2} = await loadFixture(deployContractFixture);
-            const ticketPriceEth = ethers.utils.formatUnits(ticketPriceGwei, "gwei")
 
-            // Voting option 0
-            const addr1_vote_hash = await contractInstance.connect(addr1).hasher(addr1.address, 0, 10000, "salt")
-            await contractInstance.connect(addr1).vote(addr1_vote_hash, {
-                from: addr1.address,
-                value: ethers.utils.parseEther(ticketPriceEth)
-            })
+            // ---- Voting option 0 ----
+            const addr1InitialBalanceWei = await addr1.getBalance()
+            const addr1_vote_hash = await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+
+            // Expect addr1 balance to reduce
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            expect(addr1InitialBalanceWei.sub(addr1FinalBalanceWei).sub(ticketPriceWei)).to.be.above(0)
 
             // Expect 1 player
             expect(await contractInstance.connect(addr1).getPlayersNumber()).to.be.equal(1);
             let contractBalanceInWei = await contractInstance.connect(addr1).getBalance()
-            let contractBalanceInEth = ethers.utils.formatEther(contractBalanceInWei)
 
             // Expect correct contract balance
-            expect(contractBalanceInEth).to.be.equal(ticketPriceEth);
+            expect(contractBalanceInWei).to.be.equal(ticketPriceWei);
 
             // Expect hash added to commitHash
             expect(await contractInstance.connect(addr1).commitMap(addr1_vote_hash)).to.be.true;
 
 
-            // Voting option 1
-            const addr2_vote_hash = await contractInstance.connect(addr2).hasher(addr2.address, 1, 10000, "salt")
-            await contractInstance.connect(addr2).vote(addr2_vote_hash, {
-                from: addr2.address,
-                value: ethers.utils.parseEther(ticketPriceEth)
-            })
+            // ---- Voting option 1 ----
+            const addr2InitialBalanceWei = await addr2.getBalance()
+            const addr2_vote_hash = await voteFunc(contractInstance, ticketPriceGwei, addr2, 1, 10000, "salt")
+
+            // Expect addr2 balance to reduce
+            const addr2FinalBalanceWei = await addr2.getBalance()
+            expect(addr2InitialBalanceWei.sub(addr2FinalBalanceWei).sub(ticketPriceWei)).to.be.above(0)
 
             // Expect 2 players
-            expect(await contractInstance.connect(addr1).getPlayersNumber()).to.be.equal(2);
-            contractBalanceInWei = await contractInstance.connect(addr1).getBalance()
-            contractBalanceInEth = ethers.utils.formatEther(contractBalanceInWei)
+            expect(await contractInstance.connect(addr2).getPlayersNumber()).to.be.equal(2);
+            contractBalanceInWei = await contractInstance.connect(addr2).getBalance()
 
             // Expect correct contract balance
-            expect(contractBalanceInEth).to.be.equal((ticketPriceEth * 2).toString());
+            expect(contractBalanceInWei).to.be.equal((ticketPriceWei * 2).toString());
 
             // Expect hash added to commitHash
-            expect(await contractInstance.connect(addr1).commitMap(addr2_vote_hash)).to.be.true;
+            expect(await contractInstance.connect(addr2).commitMap(addr2_vote_hash)).to.be.true;
+        });
+    });
+
+    describe("Emergency repay", function () {
+        it("Hasher should return consistent result ----", async function () {
+            const {contractInstance, addr1} = await loadFixture(deployContractFixture);
+            const addr1InitialBalanceWei = await addr1.getBalance()
+
+            const addr1_vote_hash = await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+
+            // Expect addr1 balance to reduce
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            expect(addr1InitialBalanceWei.sub(addr1FinalBalanceWei).sub(ticketPriceWei)).to.be.above(0)
         });
     });
 });
+
+
+
+async function voteFunc(contractInstance, msgValueGwei, addr, option, unix, salt) {
+    const ticketPriceEth = ethers.utils.formatUnits(msgValueGwei, "gwei")
+    const voteHash = await contractInstance.connect(addr).hasher(addr.address, option, unix, salt)
+    await contractInstance.connect(addr).vote(voteHash, {
+        from: addr.address,
+        value: ethers.utils.parseEther(ticketPriceEth)
+    })
+
+    return voteHash
+}
 

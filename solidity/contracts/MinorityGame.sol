@@ -52,8 +52,6 @@ contract MinorityGame {
 
     // Vote is called by participants to commit their votes (and pay)
     function vote(bytes32 commitHash) public payable {
-        console.log("[DEBUG vote] msg.value: %s", msg.value);
-
         //ticket price equals to amount entered
         require(msg.value == ticketPrice * 1 gwei, 'msg.value does not equal ticketPrice');
 
@@ -62,8 +60,6 @@ contract MinorityGame {
 
         // Add commitHash to commitMap
         commitMap[commitHash] = true;
-
-        console.log("[DEBUG vote] Voter: %s", msg.sender);
     }
 
     // Revert function that is called when game fails for any reason

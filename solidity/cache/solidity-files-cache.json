@@ -111,8 +111,8 @@
       ]
     },
     "/Users/yeeeeehan/Desktop/Blockchain/minority-game-dapp/solidity/contracts/MinorityGame.sol": {
-      "lastModificationDate": 1669901400789,
-      "contentHash": "e3ac74d03a6f210cc9631cf71a10a478",
+      "lastModificationDate": 1669970878010,
+      "contentHash": "634ecb85b683f425c7b27471910be86f",
       "sourceName": "contracts/MinorityGame.sol",
       "solcConfig": {
         "version": "0.8.15",
