@@ -3,6 +3,8 @@ const {loadFixture} = require("@nomicfoundation/hardhat-network-helpers");
 
 const ticketPriceGwei = 100000000
 const ticketPriceWei = ethers.utils.parseUnits(ticketPriceGwei.toString(), "gwei")
+const gasDiscrepWei = 500000000000000 // 0.0005 eth
+const InitialBalance = 10000000000000000000000 // 10000 eth
 
 
 async function voteFunc(contractInstance, msgValueGwei, addr, option, unix, salt) {
@@ -90,6 +92,20 @@ describe("Token contract", function () {
             })).to.be.revertedWith('msg.value does not equal ticketPrice');
         });
 
+        it("Vote should revert if it is duplicate", async function () {
+            const {contractInstance, addr1} = await loadFixture(deployContractFixture);
+
+            // Vote once
+            const addr1_vote_hash = await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+
+            // Expect calling vote function to revert when vote is duplicate
+            const ticketPriceEth = ethers.utils.formatUnits(ticketPriceGwei, "gwei")
+            await expect(contractInstance.connect(addr1).vote(addr1_vote_hash, {
+                from: addr1.address,
+                value: ethers.utils.parseEther(ticketPriceEth)
+            })).to.be.revertedWith('vote already exists');
+        });
+
         it("Vote should add voter to players array, and add hash to commitHash", async function () {
             const {contractInstance, addr1, addr2} = await loadFixture(deployContractFixture);
 
@@ -159,6 +175,149 @@ describe("Token contract", function () {
             // Expect addr2 to receive refund
             const addr2RefundedBalanceWei = await addr2.getBalance()
             expect(addr2RefundedBalanceWei).to.be.equal(addr2FinalBalanceWei.add(ticketPriceWei))
+
+            // Expect contract state to be reset
+            expect(await contractInstance.qid()).to.equal(2);
+            expect(await contractInstance.getPlayersNumber()).to.equal(0)
+        });
+    });
+
+    describe("Reveal", function () {
+        it("players.length != votes.length", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const addr1InitialBalanceWei = await addr1.getBalance()
+            const addr2InitialBalanceWei = await addr2.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+            await voteFunc(contractInstance, ticketPriceGwei, addr2, 1, 10000, "salt")
+
+            // Distribute prize with invalid votes array
+            await contractInstance.connect(owner).reveal([[addr1.address, 0, 10000, "salt"]])
+
+            // Emergency repay - all players get back their funds
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            const addr2FinalBalanceWei = await addr2.getBalance()
+            expect(addr1FinalBalanceWei).to.be.above(addr1InitialBalanceWei.sub(gasDiscrepWei))
+            expect(addr2FinalBalanceWei).to.be.above(addr2InitialBalanceWei.sub(gasDiscrepWei))
+        });
+
+        it("Unexpected vote data", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const addr1InitialBalanceWei = await addr1.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+
+            // Distribute prize with invalid votes array
+            await contractInstance.connect(owner).reveal([[addr1.address, 2, 10000, "salt"]])
+
+            // Emergency repay - all players get back their funds
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            expect(addr1FinalBalanceWei).to.be.above(addr1InitialBalanceWei.sub(gasDiscrepWei))
+        });
+
+        it("1 - Commit hash in votes array inconsistent with hash in commitMap", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const addr1InitialBalanceWei = await addr1.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+
+            // Distribute prize with invalid votes array
+            await contractInstance.connect(owner).reveal([[addr1.address, 0, 99999, "salt"]])
+
+            // Emergency repay - all players get back their funds
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            expect(addr1FinalBalanceWei).to.be.above(addr1InitialBalanceWei.sub(gasDiscrepWei))
+        });
+
+        it("2 - Commit hash in votes array inconsistent with hash in commitMap", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const addr1InitialBalanceWei = await addr1.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+
+            // Distribute prize with invalid votes array
+            await contractInstance.connect(owner).reveal([[addr1.address, 0, 10000, "wrongsalt"]])
+
+            // Emergency repay - all players get back their funds
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            expect(addr1FinalBalanceWei).to.be.above(addr1InitialBalanceWei.sub(gasDiscrepWei))
+        });
+
+        it("No winners", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const addr1InitialBalanceWei = await addr1.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10001, "salt")
+
+            // Distribute prize with invalid votes array
+            await contractInstance.connect(owner).reveal([[addr1.address, 0, 10000, "salt"], [addr1.address, 0, 10001, "salt"]])
+
+            // Emergency repay - all players get back their funds
+            const addr1FinalBalanceWei = await addr1.getBalance()
+            expect(addr1FinalBalanceWei).to.be.above(addr1InitialBalanceWei.sub(gasDiscrepWei))
+        });
+
+        it("Opt 1 wins", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const ownerInitialBalanceWei = await owner.getBalance()
+            const addr2InitialBalanceWei = await addr2.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10001, "salt")
+            await voteFunc(contractInstance, ticketPriceGwei, addr2, 1, 10000, "salt")
+
+            // Expect contract to have 3 tickets worth of eth
+            const contractBalance = await contractInstance.getBalance()
+            expect(contractBalance).to.be.equal(ticketPriceWei.mul(3))
+
+            // Distribute prize
+            await contractInstance.connect(owner).reveal([[addr1.address, 0, 10000, "salt"],[addr1.address, 0, 10001, "salt"],[addr2.address, 1, 10000, "salt"]])
+
+            // Expect contract to not have any eth
+            expect(await contractInstance.getBalance()).to.be.equal(0)
+
+            // Expect owner to receive commission 5% comission
+            const ownerFinalBalanceWei = await owner.getBalance()
+            const actualComms = await ownerFinalBalanceWei.sub(ownerInitialBalanceWei)
+            const expectedComms = await contractBalance.mul(5).div(100).sub(gasDiscrepWei)
+            expect(actualComms).to.be.above(expectedComms)
+
+            // Expect winner to receive rewards
+            const addr2FinalBalanceWei = await addr2.getBalance()
+            const actualReward = await addr2FinalBalanceWei.sub(addr2InitialBalanceWei)
+            const expectedReward = await contractBalance.sub(ticketPriceWei).sub(actualComms).sub(gasDiscrepWei)
+            expect(actualReward).to.be.above(expectedReward)
+
+
+            // Expect contract state to be reset
+            expect(await contractInstance.qid()).to.equal(2);
+            expect(await contractInstance.getPlayersNumber()).to.equal(0)
+        });
+
+        it("Opt 0 wins", async function () {
+            const {contractInstance, owner, addr1, addr2} = await loadFixture(deployContractFixture);
+            const ownerInitialBalanceWei = await owner.getBalance()
+
+            await voteFunc(contractInstance, ticketPriceGwei, addr1, 0, 10000, "salt")
+            await voteFunc(contractInstance, ticketPriceGwei, addr2, 1, 10000, "salt")
+            await voteFunc(contractInstance, ticketPriceGwei, addr2, 1, 10001, "salt")
+
+            // Expect contract to have 3 tickets worth of eth
+            const contractBalance = await contractInstance.getBalance()
+            expect(contractBalance).to.be.equal(ticketPriceWei.mul(3))
+
+            // Distribute prize
+            await contractInstance.connect(owner).reveal([[addr1.address, 0, 10000, "salt"],[addr2.address, 1, 10000, "salt"],[addr2.address, 1, 10001, "salt"]])
+
+            // Expect contract to not have any eth
+            expect(await contractInstance.getBalance()).to.be.equal(0)
+
+            // Expect owner to receive commission 5% comission
+            const ownerFinalBalanceWei = await owner.getBalance()
+            const actualComms = await ownerFinalBalanceWei.sub(ownerInitialBalanceWei)
+            const expectedComms = await contractBalance.mul(5).div(100).sub(gasDiscrepWei)
+            expect(actualComms).to.be.above(expectedComms)
 
             // Expect contract state to be reset
             expect(await contractInstance.qid()).to.equal(2);

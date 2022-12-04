@@ -58,6 +58,9 @@ contract MinorityGame {
         // Push all player addresses to players[] for emergencyRepay
         players.push(payable(msg.sender));
 
+        // Check if commitHash is already in commitMap
+        require(commitMap[commitHash] == false, 'vote already exists');
+
         // Add commitHash to commitMap
         commitMap[commitHash] = true;
     }
@@ -67,7 +70,6 @@ contract MinorityGame {
         for (uint i; i < players.length; i++) {
             players[i].transfer(ticketPrice * 1 gwei);
         }
-        console.log("[DEBUG emergencyRepay] emergencyRepay END");
         return;
     }
 
@@ -112,12 +114,12 @@ contract MinorityGame {
 
         // Option 1 is the minority, payout to players that chose option 1
         if (opt0.length > opt1.length) {
-            console.log("[DEBUG reveal] opt1 wins");
+            console.log("[DEBUG reveal] opt1 wins", opt0.length, opt1.length);
             distributePrize(opt1);
         }
         // Option 0 is the minority, payout to players that chose option 0
         else if (opt0.length < opt1.length) {
-            console.log("[DEBUG reveal] opt0 wins");
+            console.log("[DEBUG reveal] opt0 wins", opt0.length, opt1.length);
             distributePrize(opt0);
         }
         else {
@@ -134,6 +136,7 @@ contract MinorityGame {
     function distributePrize(address payable[] memory winners) internal onlyGameMaster {
         // Only have votes for 1 option
         if (winners.length == 0) {
+            console.log("[DEBUG distributePrize] No winners");
             emergencyRepay();
             return;
         }
