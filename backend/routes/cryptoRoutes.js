@@ -4,7 +4,7 @@ const {
   handleRequest,
 } = require('../controllers/cryptoController')
 
-// Book routes: api/books
+// Book routes: api/crypto
 router.route('/').post(handleRequest)
 
 module.exports = router

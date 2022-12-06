@@ -13,10 +13,7 @@ const app = express();
 app.use(express.json()); // Informs express to recognise incoming request object as JSON object
 app.use(express.urlencoded({ extended: false })); // Informs express to recognise incoming request object as JSON object
 
-app.use('/api/goals', require('./routes/goalRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/books', require('./routes/bookRoutes'));
-app.use('/api/crypto', require('./routes/cryptoRoutes'));
+app.use('/api/votes', require('./routes/votesRoutes'));
 
 // Serve frontend
 if (process.env.NODE_ENV === 'production') {

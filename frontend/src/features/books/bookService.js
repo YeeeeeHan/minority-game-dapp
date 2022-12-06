@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const API_URL = '/api/books/'
 
-// Get all users
+// Get all books
 export const getAllBooks = async () => {
   try {
     const response = await axios.get(API_URL)
@@ -19,7 +19,7 @@ export const getAllBooks = async () => {
   }
 }
 
-// Get all users
+// Add book
 export const createBook = async (title) => {
   try {
     const book = {title}
