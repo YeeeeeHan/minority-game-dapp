@@ -20,7 +20,7 @@ const createVote = asyncHandler(async (req, res) => {
     throw new Error('Vote already exists')
   }
 
-  // Create book
+  // Create vote
   const vote = await Votes.create({ qid, address, option, unix, salt })
 
   // Return results
