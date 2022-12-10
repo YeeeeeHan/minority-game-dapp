@@ -1,7 +1,6 @@
 // Queries backend endpoints
-
 import axios from 'axios'
-
+// Proxy in package.json - "proxy": "http://localhost:4000"
 const API_URL = '/api/books/'
 
 // Get all books

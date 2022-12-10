@@ -1,7 +1,10 @@
 const {expect} = require("chai");
 const {loadFixture} = require("@nomicfoundation/hardhat-network-helpers");
+const dotenv = require('dotenv')
+dotenv.config()
 
-const ticketPriceGwei = 100000000
+
+const ticketPriceGwei = process.env.TICKET_PRICE_GWEI
 const ticketPriceWei = ethers.utils.parseUnits(ticketPriceGwei.toString(), "gwei")
 const gasDiscrepWei = 500000000000000 // 0.0005 eth
 const InitialBalance = 10000000000000000000000 // 10000 eth

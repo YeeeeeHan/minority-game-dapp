@@ -59,8 +59,8 @@ undefined
 > await box.store(42)
 > await box.retrieve()
 
-# Deploy to testnet 
-npx hardhat run scripts/deploy.js --network goerli
+# Deploy to goerli 
+npx hardhat run scripts/deploy.js --network goerli // Remember to update .env file to include the deployed contract address
 ```
 
 ## Project deployment

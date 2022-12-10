@@ -1,3 +1,8 @@
+const dotenv = require('dotenv')
+dotenv.config()
+
+const ticketPriceGwei = process.env.TICKET_PRICE_GWEI
+
 async function main() {
   const [deployer] = await ethers.getSigners()
 
@@ -5,12 +10,12 @@ async function main() {
 
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
-  const Box = await ethers.getContractFactory('Box')
-  console.log('Deploying Box...')
-  const box = await Box.deploy()
+  const MinorityGame = await ethers.getContractFactory('MinorityGame')
+  console.log('Deploying MinorityGame...')
+  const game = await MinorityGame.deploy(ticketPriceGwei)
 
-  await box.deployed()
-  console.log('Box deployed to:', box.address)
+  await game.deployed()
+  console.log('MinorityGame deployed to:', game.address)
 }
 
 main()

@@ -1,19 +1,25 @@
 const asyncHandler = require('express-async-handler')
-const Votes = require('../models/votesModel')
+const Vote = require('../models/voteModel')
 
 // @desc    Create new vote entry
-// @route   POST /api/votes
+// @route   POST /api/vote
 // @access  Public
 const createVote = asyncHandler(async (req, res) => {
   const { qid, address, option, unix, salt } = req.body
 
-  if (!qid || !address || !option || !unix || !salt) {
+  if (
+    qid === undefined ||
+    address === undefined ||
+    option === undefined ||
+    unix === undefined ||
+    salt === undefined
+  ) {
     res.status(400)
     throw new Error('Please add all fields')
   }
 
   // Check if vote exists
-  const votesExists = await Votes.findOne({ qid, address, option, unix, salt })
+  const votesExists = await Vote.findOne({ qid, address, option, unix, salt })
 
   if (votesExists) {
     res.status(400)
@@ -21,7 +27,7 @@ const createVote = asyncHandler(async (req, res) => {
   }
 
   // Create vote
-  const vote = await Votes.create({ qid, address, option, unix, salt })
+  const vote = await Vote.create({ qid, address, option, unix, salt })
 
   // Return results
   if (vote) {
@@ -39,17 +45,17 @@ const createVote = asyncHandler(async (req, res) => {
 })
 
 // @desc    Get votes by qid
-// @route   GET /api/votes/:qid
+// @route   GET /api/vote/:qid
 // @access  Public
 const getVoteByQid = asyncHandler(async (req, res) => {
-  const votes = await Votes.find({ qid: req.params.qid })
+  const votes = await Vote.find({ qid: req.params.qid })
   if (!votes) {
     res.status(400)
     throw new Error('Error while retrieving votes')
   }
 
   // Return results
-  const ret = {numVotes: votes.length, votes}
+  const ret = { numVotes: votes.length, votes }
   res.status(201).json(ret)
 })
 

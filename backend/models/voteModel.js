@@ -28,4 +28,4 @@ const voteSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('Votes', voteSchema)
+module.exports = mongoose.model('Vote', voteSchema)

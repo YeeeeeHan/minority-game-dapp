@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import Button from '@mui/material/Button'
 import { ethers } from 'ethers'
 import { postCommand } from '../features/crypto/cryptoService'
-import contract from './Box.json'
-
+import contract from "../contracts/MinorityGame.json"
 const WalletCard = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [defaultAccount, setDefaultAccount] = useState(null)
@@ -16,31 +15,12 @@ const WalletCard = () => {
       await provider.send('eth_requestAccounts', [])
       await accountChangedHandler(provider.getSigner())
 
-      // From metamask
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
-      const web3signer = web3Provider.getSigner()
-
-      const boxContract = new ethers.Contract(
-        '0x3a93FA017ff77e5f81230EF2b618f21d92260606',
-        contract.abi,
-        web3signer
-      )
-
-      const retrieved = await boxContract.retrieve()
-      console.log('The value is: ' + retrieved)
-      const tx = await boxContract.store(222)
-      console.log('Updating the message with web3Provider ...')
-      await tx.wait()
-      const newRetrieved = await boxContract.retrieve()
-      console.log('The new value is: ' + newRetrieved)
-
-      const result = await postCommand()
-      setValue(result)
     } else {
       setErrorMessage('Please Install Metamask!!!')
     }
   }
   const accountChangedHandler = async (newAccount) => {
+    console.log("HEREEEEE 2")
     const address = await newAccount.getAddress()
     setDefaultAccount(address)
     const balance = await newAccount.getBalance()

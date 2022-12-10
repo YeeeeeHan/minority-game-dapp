@@ -21,7 +21,14 @@ const createQuestion = asyncHandler(async (req, res) => {
   }
 
   // Create question
-  const q = await Question.create({ qid, question, option0, option1, salt, duration })
+  const q = await Question.create({
+    qid,
+    question,
+    option0,
+    option1,
+    salt,
+    duration,
+  })
 
   // Return results
   if (q) {
@@ -43,7 +50,7 @@ const createQuestion = asyncHandler(async (req, res) => {
 // @route   GET /api/question/:qid
 // @access  Public
 const getQuestionByQid = asyncHandler(async (req, res) => {
-  const question = await Question.find({ qid: req.params.qid })
+  const question = await Question.findOne({ qid: req.params.qid })
   if (!question) {
     res.status(400)
     throw new Error('Qid not found')

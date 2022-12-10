@@ -1,0 +1,7 @@
+.App-clock {
+  font-family: Helvetica Neue, Helvetica, Arial, Sans-Serif;
+  font-size: calc(10px + 0.05vmin);
+  line-height: 130%;
+  font-weight: 600;
+  margin: 45px 0px 0px 0px;
+}

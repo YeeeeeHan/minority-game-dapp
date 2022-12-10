@@ -1,0 +1,15 @@
+.daily-option .option {
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+.daily-option .option:hover {
+  filter: brightness(85%);
+  cursor: url("../../public/cursor2.png") 25 25, auto;
+}
+
+.daily-option .option:active {
+  filter: brightness(65%);
+  cursor: url("../../public/cursor4.png") 12 12, auto;
+}

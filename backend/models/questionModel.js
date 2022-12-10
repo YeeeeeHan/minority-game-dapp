@@ -5,6 +5,7 @@ const questionSchema = mongoose.Schema(
       qid: {
           type: Number,
           required: [true, 'Please add a qid'],
+          unique: true,
       },
       question: {
           type: String,

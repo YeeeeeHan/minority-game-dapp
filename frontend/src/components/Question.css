@@ -1,0 +1,23 @@
+.daily-question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-wrap: break-word;
+  line-height: 1;
+}
+
+.daily-question .question {
+  max-width: 70vw;
+}
+
+.total-participants {
+  font-size: calc(10px + 2vmin);
+  margin: 5px;
+  color: rgb(204, 204, 204);
+}
+
+.reveal-result {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
