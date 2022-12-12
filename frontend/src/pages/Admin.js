@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import "../App.css";
-import Clock from "../components/Clock";
+import React, { useState, useEffect } from 'react'
+import '../App.css'
+import Clock from '../components/Clock'
 // import web3 from "../web3";
 // import Contract from "../Contract";
-import { postQuestion, reveal, emergencyRepayBackend } from "../API";
+import { postQuestion, reveal, emergencyRepayBackend } from '../API'
+import UseContractEmergencyRepay from '../hooks/ethereum/useContractEmergencyRepay'
 
 function Admin() {
-  const [details, setDetails] = useState({});
-  const [revealPassword, setRevealPassword] = useState("");
-  const [data, setData] = useState([]);
-  const [qid, setQid] = useState();
-  const [message, setMessage] = useState("");
+  const [details, setDetails] = useState({})
+  const [revealPassword, setRevealPassword] = useState('')
+  const [data, setData] = useState([])
+  const [qid, setQid] = useState()
+  const [message, setMessage] = useState('')
 
   async function temp() {
     // const q = await Contract.methods.Qid().call();
@@ -18,29 +19,25 @@ function Admin() {
   }
 
   useEffect(() => {
-    temp();
-  }, []);
+    temp()
+  }, [])
 
   // Emergency refund of all funds manually by administrator
   async function clickEmergencyRepay(e) {
-    if (window.confirm("Perform Emergency Repay?") === false) {
-      return;
+    if (window.confirm('Perform Emergency Repay?') === false) {
+      return
     }
-    e.preventDefault();
-    // const accounts = await web3.eth.getAccounts();
-    // await Contract.methods
-    //   .emergencyRepay()
-    //   .send({ from: accounts[0], gas: 3000000 });
-    emergencyRepayBackend(qid);
+    e.preventDefault()
+    UseContractEmergencyRepay()
   }
 
   // clickReveal for manual ending of game by administrator
   async function clickReveal(e) {
-    if (window.confirm("Perform Reveal?") === false) {
-      return;
+    if (window.confirm('Perform Reveal?') === false) {
+      return
     }
-    e.preventDefault();
-    setMessage("Waiting on transaction...");
+    e.preventDefault()
+    setMessage('Waiting on transaction...')
     // const accounts = await web3.eth.getAccounts();
     async function submitToSmartContract(data) {
       // await Contract.methods
@@ -50,13 +47,13 @@ function Admin() {
     }
 
     reveal(revealPassword, qid).then((res) => {
-      submitToSmartContract(res.data.map(Object.values));
-    });
+      submitToSmartContract(res.data.map(Object.values))
+    })
   }
 
   function handleSubmit() {
-    const { content, optionzero, optionone, password } = details;
-    postQuestion(content, optionzero, optionone, password);
+    const { content, optionzero, optionone, password } = details
+    postQuestion(content, optionzero, optionone, password)
   }
 
   return (
@@ -109,10 +106,10 @@ function Admin() {
             <label>emergencyRepay</label>
             <button
               onClick={(e) => {
-                clickEmergencyRepay(e);
+                clickEmergencyRepay(e)
               }}
             >
-              {" "}
+              {' '}
               Emergency Repay
             </button>
           </form>
@@ -126,7 +123,7 @@ function Admin() {
             />
             <button
               onClick={(e) => {
-                clickReveal(e);
+                clickReveal(e)
               }}
             >
               Reveal
@@ -136,7 +133,7 @@ function Admin() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Admin;
+export default Admin
