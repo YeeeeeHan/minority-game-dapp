@@ -1,12 +1,36 @@
 import { ethers } from 'ethers'
 import contract from './contracts/MinorityGame.json'
+import { useAtom } from 'jotai'
+import { voterAddressAtom } from './app/store'
+import { toast } from 'react-toastify'
 
-const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
-export const web3signer = web3Provider.getSigner()
-export const gameContract = new ethers.Contract(
-  '0x3feA28b6c5bd159E5b9e23d0d49841A62B9E98E3',
+// // If metamask is installed, obtain metamask-injected signer
+// export const EthersConnectWallet = async () => {
+//   if (window.ethereum) {
+//     const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
+//     console.log('EthersConnectWallet web3Provider', web3Provider)
+//     // await web3Provider.send('eth_requestAccounts', [])
+//     const mmSigner = await web3Provider.getSigner()
+//     const mmGameContract = await new ethers.Contract(
+//       process.env.REACT_APP_GAME_CONTRACT,
+//       contract.abi,
+//       mmSigner
+//     )
+//     toast.success('Metamask connected!')
+//     return { mmSigner, mmGameContract }
+//   } else {
+//     toast.error('Please Install Metamask!')
+//   }
+// }
+
+// Alchemy provider
+const jsonRpcProvider = new ethers.providers.JsonRpcProvider(
+  process.env.REACT_APP_ALCHEMY_LINK
+)
+export const alchemyGameContract = new ethers.Contract(
+  process.env.REACT_APP_GAME_CONTRACT,
   contract.abi,
-  web3signer
+  jsonRpcProvider
 )
 
-export default { web3signer, gameContract }
+export default { alchemyGameContract }

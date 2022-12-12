@@ -1,5 +1,5 @@
 import axios from "axios";
-import web3 from "./web3";
+// import web3 from "./web3";
 
 const api = axios.create({ baseURL: "http://localhost:4000" });
 
@@ -24,7 +24,7 @@ export async function postQuestion(content, optionzero, optionone, password) {
       optionzero: optionzero,
       optionone: optionone,
       salt: (Math.random() + 1).toString(36).substring(2),
-      password: web3.utils.soliditySha3(password),
+      // password: web3.utils.soliditySha3(password),
     })
 
     .catch((error) => {

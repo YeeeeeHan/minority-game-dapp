@@ -4,12 +4,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 import HistoricalQuestions from './HistoricalQuestions'
 import React, { useEffect, useState } from 'react'
 import useGetQuestion from '../hooks/question/useGetQuestion'
-import useCastVote from '../hooks/vote/useCastVote'
-import { gameContract } from '../ethers'
+import { alchemyGameContract } from '../ethers'
 
 function QuestionCard({ qid, date, submitVote, message, history }) {
   const [question, setQuestion] = useState()
-  const [votes, setVotes] = useState(0)
+  const [participants, setParticipants] = useState(0)
 
   // Hook to get question details by Qid
   useGetQuestion(qid, setQuestion)
@@ -19,8 +18,8 @@ function QuestionCard({ qid, date, submitVote, message, history }) {
   useEffect(() => {
     // Retrieving current qid
     ;(async () => {
-      const participants = await gameContract.getPlayersNumber()
-      setVotes(participants.toNumber())
+      const participants = await alchemyGameContract.getPlayersNumber()
+      setParticipants(participants.toNumber())
     })()
   }, [message])
 
@@ -36,7 +35,7 @@ function QuestionCard({ qid, date, submitVote, message, history }) {
             <div className="question-date">{date}</div>
             <div className="question-option">
               <h1>
-                <Question participants={votes} content={question.question} />
+                <Question participants={participants} content={question.question} />
               </h1>
               <div className="daily-option">
                 <Option

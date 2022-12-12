@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import Clock from "../components/Clock";
-import web3 from "../web3";
-import Contract from "../Contract";
+// import web3 from "../web3";
+// import Contract from "../Contract";
 import { postQuestion, reveal, emergencyRepayBackend } from "../API";
 
 function Admin() {
@@ -13,44 +13,40 @@ function Admin() {
   const [message, setMessage] = useState("");
 
   async function temp() {
-    const q = await Contract.methods.Qid().call();
-    setQid(q);
+    // const q = await Contract.methods.Qid().call();
+    // setQid(q);
   }
 
   useEffect(() => {
     temp();
   }, []);
 
-  /*
-  Emergency refund of all funds manually by administrator
-  */
+  // Emergency refund of all funds manually by administrator
   async function clickEmergencyRepay(e) {
     if (window.confirm("Perform Emergency Repay?") === false) {
       return;
     }
     e.preventDefault();
-    const accounts = await web3.eth.getAccounts();
-    await Contract.methods
-      .emergencyRepay()
-      .send({ from: accounts[0], gas: 3000000 });
+    // const accounts = await web3.eth.getAccounts();
+    // await Contract.methods
+    //   .emergencyRepay()
+    //   .send({ from: accounts[0], gas: 3000000 });
     emergencyRepayBackend(qid);
   }
 
-  /*
-  clickReveal for manual ending of game by administrator
-  */
+  // clickReveal for manual ending of game by administrator
   async function clickReveal(e) {
     if (window.confirm("Perform Reveal?") === false) {
       return;
     }
     e.preventDefault();
     setMessage("Waiting on transaction...");
-    const accounts = await web3.eth.getAccounts();
+    // const accounts = await web3.eth.getAccounts();
     async function submitToSmartContract(data) {
-      await Contract.methods
-        .reveal(data)
-        .send({ from: accounts[0], gas: 3000000 });
-      setMessage("Transaction completed");
+      // await Contract.methods
+      //   .reveal(data)
+      //   .send({ from: accounts[0], gas: 3000000 });
+      // setMessage("Transaction completed");
     }
 
     reveal(revealPassword, qid).then((res) => {
@@ -58,9 +54,6 @@ function Admin() {
     });
   }
 
-  /*
-  Submitting of 
-  */
   function handleSubmit() {
     const { content, optionzero, optionone, password } = details;
     postQuestion(content, optionzero, optionone, password);

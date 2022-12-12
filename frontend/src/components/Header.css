@@ -1,0 +1,10 @@
+.header {
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 2rem;
+  padding: 1rem;
+  font-family: 'Lato', sans-serif;
+  color: #000000;
+}

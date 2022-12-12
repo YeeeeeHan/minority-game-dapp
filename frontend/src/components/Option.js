@@ -17,7 +17,7 @@ function Option({ submitVote, optionTitle, value }) {
   return (
     <div>
       <h3
-        className="option noselect"
+        className="option"
         onClick={(e) => {
           handleClick(e);
         }}

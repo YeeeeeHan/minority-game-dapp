@@ -2,6 +2,7 @@
   padding: 10px;
   border: 1px solid white;
   border-radius: 5px;
+  font-size: 2rem;
 }
 
 .daily-option .option:hover {

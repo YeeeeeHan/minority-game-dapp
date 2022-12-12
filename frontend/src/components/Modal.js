@@ -27,11 +27,6 @@ export default function KeepMountedModal() {
         color={"inherit"}
         onClick={handleOpen}
         className="information-button"
-        style={{
-          position: "absolute",
-          right: "10px",
-          fontSize: "calc(20px + 2vmin)",
-        }}
       >
         &#x1F6C8; rules
       </Button>

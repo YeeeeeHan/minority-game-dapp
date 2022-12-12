@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { createVote } from '../../services/voteService'
 
-export default function useCastVote() {
+export default function useCastVote(setMessage) {
   const queryClient = useQueryClient()
 
   return useMutation(createVote, {

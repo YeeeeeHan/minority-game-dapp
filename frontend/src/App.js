@@ -3,44 +3,54 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Header from './components/Header'
 import SigninSide from './components/Signin'
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import WalletCard from './pages/WalletCard'
+import { ConnectWallet } from './pages/ConnectWallet'
 import Homepage from './pages/Homepage'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import Contract from "./Contract";
-import {getQuestionById} from "./services/questionService";
-import Admin from "./pages/Admin"
+import Admin from './pages/Admin'
+
+
+import { Web3ReactProvider } from '@web3-react/core'
+import {MetamaskProvider} from './providers/metamask'
+import { Web3Provider } from '@ethersproject/providers'
+
+function getLibrary(provider) {
+  const library = new Web3Provider(provider)
+  library.pollingInterval = 12000
+  return library
+}
 
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-      }
-    }
-  });
+      },
+    },
+  })
 
   return (
     <>
       <Router>
-        <QueryClientProvider client={queryClient}>
-          <div className="container">
-            {/*<Header />*/}
-            <WalletCard />
-            <Routes>
-              {/*<Route path="/" element={<Dashboard />} />*/}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/" element={<Homepage />} />
-              <Route exact path="/admin" element={<Admin />} />
-            </Routes>
-            {/*<SigninSide />*/}
-          </div>
-          <ReactQueryDevtools initialIsOpen={false}/>
-        </QueryClientProvider>
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <MetamaskProvider>
+            <QueryClientProvider client={queryClient}>
+              <Header />
+              <div className="container">
+                <Routes>
+                  {/*<Route path="/" element={<Dashboard />} />*/}
+                  {/*<Route path="/login" element={<Login />} />*/}
+                  {/*<Route path="/register" element={<Register />} />*/}
+                  <Route path="/connectwallet" element={<ConnectWallet />} />
+                  <Route path="/signin" element={<SigninSide />} />
+                  <Route path="/" element={<Homepage />} />
+                  <Route exact path="/admin" element={<Admin />} />
+                </Routes>
+              </div>
+              <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+          </MetamaskProvider>
+        </Web3ReactProvider>
       </Router>
       <ToastContainer />
     </>

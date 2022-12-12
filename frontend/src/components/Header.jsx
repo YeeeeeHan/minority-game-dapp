@@ -1,45 +1,46 @@
-import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
-import { Link, useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { logoutPromise, reset } from '../features/auth/authSlice'
+import './Header.css'
+import { FaSignInAlt, FaSignOutAlt, FaHome, FaCheck } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
+import KeepMountedModal from './Modal'
+import React from 'react'
+import Button from '@mui/material/Button'
+import { useWeb3React } from '@web3-react/core'
 
 function Header() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-
-  const onLogout = () => {
-    dispatch(logoutPromise())
-    dispatch(reset())
-    navigate('/')
-  }
+  const { active } = useWeb3React()
 
   return (
-    <header className='header'>
-      <div className='logo'>
-        <Link to='/'>GoalSetter</Link>
+    <header className="header">
+      <div className="logo">
+        <Link to="/">
+          <Button color={'inherit'}>
+            <FaHome /> Home
+          </Button>
+        </Link>
       </div>
       <ul>
-        {user ? (
+        {active ? (
           <li>
-            <button className='btn' onClick={onLogout}>
-              <FaSignOutAlt /> Logout
-            </button>
+            <Link to="/connectwallet">
+              <Button color={'inherit'}>
+                <FaCheck /> Wallet connected
+              </Button>
+            </Link>
           </li>
         ) : (
           <>
             <li>
-              <Link to='/login'>
-                <FaSignInAlt /> Login
-              </Link>
-            </li>
-            <li>
-              <Link to='/register'>
-                <FaUser /> Register
+              <Link to="/connectwallet">
+                <Button color={'inherit'}>
+                  <FaSignInAlt /> Connect Wallet
+                </Button>
               </Link>
             </li>
           </>
         )}
+        <li>
+          <KeepMountedModal />
+        </li>
       </ul>
     </header>
   )

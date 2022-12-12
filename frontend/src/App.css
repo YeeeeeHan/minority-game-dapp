@@ -1,6 +1,5 @@
 body {
   font-family: Helvetica Neue, Helvetica, Arial, Sans-Serif;
-  font-size: calc(10px + 2vmin);
   line-height: 130%;
   font-weight: 400;
   cursor: url("../public/cursor.png") 15 15, auto;

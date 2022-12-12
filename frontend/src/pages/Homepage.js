@@ -1,35 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import '../App.css'
 import Clock from '../components/Clock'
-import Contract from '../Contract'
-import web3 from '../web3.js'
 import QuestionCard from '../components/QuestionCard'
 import KeepMountedModal from '../components/Modal'
-import { ethers } from 'ethers'
-import {
-  castVote,
-  getCurrentQuestion,
-  getCurrentSalt,
-  getHistoricalQuestions,
-} from '../API'
 import HistoricalQuestions from '../components/HistoricalQuestions'
 import { getQuestionById } from '../services/questionService'
 import useGetQuestion from '../hooks/question/useGetQuestion'
 
-import { web3signer, gameContract } from '../ethers'
+import { alchemyGameContract } from '../ethers'
 import useCastVote from '../hooks/vote/useCastVote'
 import useContractCreateVote from '../hooks/ethereum/useContractCreateVote'
-import {messageConstants} from "../constants/constants";
-
-
+import { messageConstants } from '../constants/constants'
+import { useAtom } from 'jotai'
+import { mmGameContractAtom, mmSignerAtom } from '../app/store'
+import { toast } from 'react-toastify'
 
 function Homepage() {
+  const [mmSigner, setMmSigner] = useAtom(mmSignerAtom)
+  const [mmGameContract, setMmGameContract] = useAtom(mmGameContractAtom)
+
   const dateOptions = { day: 'numeric', month: 'numeric', year: 'numeric' }
   const [date] = useState(
     new Date().toLocaleString('en-GB', dateOptions).split('/').join(' . ')
   )
   const [qid, setQid] = useState()
-  const [voterAddr, setVoterAddr] = useState()
   const [message, setMessage] = useState()
   const [history, setHistory] = useState([])
 
@@ -43,16 +37,14 @@ function Homepage() {
 
   // Debugging
   useEffect(() => {
-    ;(async () => {
-    })()
-
+    ;(async () => {})()
   })
 
   // Runs once after initial render
   useEffect(() => {
     // Retrieving current qid
     ;(async () => {
-      const qid = await gameContract.qid()
+      const qid = await alchemyGameContract.qid()
       setQid(qid.toNumber())
     })()
   }, [])
@@ -76,16 +68,15 @@ function Homepage() {
   // by hashing the address, the option and the salt which is fetched from DB.
   // Try Catch is used to check if the transaction is successful
   const submitVote = async (option) => {
-    // Retrieving user address
-    console.log("HEREEEEE 1")
-    const addr = await web3signer.getAddress()
-    setVoterAddr(addr)
-
-    setMessage(messageConstants.WAITING_TRANSACTION)
-
-    const unix = Math.floor(Date.now() / 1000)
-
     try {
+      // Retrieving user address
+      console.log(mmSigner)
+      const voterAddr = await mmSigner.getAddress()
+
+      setMessage(messageConstants.WAITING_TRANSACTION)
+
+      const unix = Math.floor(Date.now() / 1000)
+
       // Send vote to DB
       await mutateCastVote({
         qid: qid,
@@ -94,24 +85,22 @@ function Homepage() {
         unix: unix,
         salt: 'salt',
       })
-      const voteHash = await gameContract.hasher(
+      const voteHash = await mmGameContract.hasher(
         voterAddr,
         option,
         unix,
         'salt'
       )
-
       // Send vote to Ethereum
-      await mutateCreateVote(voteHash, setMessage)
+      await mutateCreateVote({ voteHash, mmGameContract })
     } catch (error) {
-      console.log('submitVote error', error)
+      toast.error(error)
     }
   }
 
   return (
     <div>
       <div className="App">
-        <KeepMountedModal />
         <div className="logo-date">
           <h1 className="logo">limmy</h1>
           <h1 className="dot">&#8226; </h1>
