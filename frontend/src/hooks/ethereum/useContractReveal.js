@@ -3,9 +3,9 @@ import { ethers } from 'ethers'
 import { messageConstants } from '../../constants/constants'
 import { toast } from 'react-toastify'
 
-const useEmergencyRepay = async (mmGameContract) => {
+const useReveal = async ({ voteArray, mmGameContract }) => {
   try {
-    const transaction = await mmGameContract.emergencyRepay()
+    const transaction = await mmGameContract.reveal(voteArray)
     const transactionReceipt = await transaction.wait()
     if (transactionReceipt.status !== 1) {
       throw new Error('Transaction failed')
@@ -15,10 +15,10 @@ const useEmergencyRepay = async (mmGameContract) => {
   }
 }
 
-export default function UseContractEmergencyRepay() {
-  return useMutation(useEmergencyRepay, {
+export default function UseContractReveal() {
+  return useMutation(useReveal, {
     onSuccess: () => {
-      toast.success(`Emergency repay success`)
+      toast.success(`Reveal success`)
     },
     onError: (error) => {
       toast.error(`Smart contract error, ${error.reason || error}`)

@@ -5,55 +5,85 @@ import Clock from '../components/Clock'
 // import Contract from "../Contract";
 import { postQuestion, reveal, emergencyRepayBackend } from '../API'
 import UseContractEmergencyRepay from '../hooks/ethereum/useContractEmergencyRepay'
+import {
+  createQuestion,
+  UsePostQuestion,
+} from '../hooks/question/usePostQuestion'
+import useContractCreateVote from '../hooks/ethereum/useContractCreateVote'
+import { toast } from 'react-toastify'
+import { useAtom } from 'jotai'
+import { mmGameContractAtom } from '../app/store'
+import UseContractReveal from "../hooks/ethereum/useContractReveal";
+import UseGetVotesByQid from "../hooks/vote/useGetVotesByQid";
+import UseGetQuestionByQid from "../hooks/question/useGetQuestionByQid";
+import {alchemyGameContract} from "../ethers";
 
 function Admin() {
-  const [details, setDetails] = useState({})
+  const [questionDetails, setQuestionDetails] = useState({})
   const [revealPassword, setRevealPassword] = useState('')
-  const [data, setData] = useState([])
-  const [qid, setQid] = useState()
   const [message, setMessage] = useState('')
+  const [qid, setQid] = useState()
 
-  async function temp() {
-    // const q = await Contract.methods.Qid().call();
-    // setQid(q);
-  }
+  const [mmGameContract, setMmGameContract] = useAtom(mmGameContractAtom)
 
-  useEffect(() => {
-    temp()
-  }, [])
+  // Sending votes to Contract
+  const { mutate: mutateCreateQuestion } = UsePostQuestion()
+  const { mutate: mutateEmergencyRepay } = UseContractEmergencyRepay()
+  const { mutate: mutateReveal } = UseContractReveal()
+  const {data} = UseGetVotesByQid(qid)
 
-  // Emergency refund of all funds manually by administrator
-  async function clickEmergencyRepay(e) {
+  // Emergency refunds all funds manually by administrator
+  async function handleEmergencyRepay(e) {
+    e.preventDefault()
     if (window.confirm('Perform Emergency Repay?') === false) {
       return
     }
-    e.preventDefault()
-    UseContractEmergencyRepay()
+    setMessage('Waiting on emergency repay transaction...')
+    mutateEmergencyRepay(mmGameContract)
+    setMessage('')
   }
 
-  // clickReveal for manual ending of game by administrator
+  // Runs once after initial render
+  useEffect(() => {
+    // Retrieving current qid
+    ;(async () => {
+      const qid = await alchemyGameContract.qid()
+      setQid(qid.toNumber())
+    })()
+  }, [])
+
+  // Manually end game and reveal by administrator
   async function clickReveal(e) {
+    e.preventDefault()
     if (window.confirm('Perform Reveal?') === false) {
       return
     }
-    e.preventDefault()
-    setMessage('Waiting on transaction...')
-    // const accounts = await web3.eth.getAccounts();
-    async function submitToSmartContract(data) {
-      // await Contract.methods
-      //   .reveal(data)
-      //   .send({ from: accounts[0], gas: 3000000 });
-      // setMessage("Transaction completed");
-    }
-
-    reveal(revealPassword, qid).then((res) => {
-      submitToSmartContract(res.data.map(Object.values))
+    setMessage('Waiting on reveal transaction...')
+    console.log("@@@@@@@@@@ data.votes", data.votes)
+    const voteArray = data.votes.map(elem => {
+      return [elem.address, elem.option, elem.unix, elem.salt]
     })
+    console.log("@@@@@@@@@@ voteArray", voteArray)
+    mutateReveal({voteArray, mmGameContract})
+    setMessage('')
   }
 
-  function handleSubmit() {
-    const { content, optionzero, optionone, password } = details
-    postQuestion(content, optionzero, optionone, password)
+  // Emergency Repay
+  const handleSubmitQuestion = async (e) => {
+    e.preventDefault()
+
+    setMessage('Waiting on create question transaction...')
+
+    const { question, option0, option1 } = questionDetails
+
+    mutateCreateQuestion({
+      question,
+      option0,
+      option1,
+      salt: 'salt',
+      duration: 123123,
+    })
+    setMessage('')
   }
 
   return (
@@ -72,7 +102,10 @@ function Admin() {
               name="content"
               placeholder="Enter full question including punctuations"
               onChange={(e) =>
-                setDetails({ ...details, content: e.target.value })
+                setQuestionDetails({
+                  ...questionDetails,
+                  question: e.target.value,
+                })
               }
             />
             <input
@@ -80,7 +113,10 @@ function Admin() {
               name="optionzero"
               placeholder="Enter option zero"
               onChange={(e) =>
-                setDetails({ ...details, optionzero: e.target.value })
+                setQuestionDetails({
+                  ...questionDetails,
+                  option0: e.target.value,
+                })
               }
             />
             <input
@@ -88,30 +124,18 @@ function Admin() {
               name="optionone"
               placeholder="Enter option one"
               onChange={(e) =>
-                setDetails({ ...details, optionone: e.target.value })
+                setQuestionDetails({
+                  ...questionDetails,
+                  option1: e.target.value,
+                })
               }
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter password"
-              onChange={(e) =>
-                setDetails({ ...details, password: e.target.value })
-              }
-            />
-            <button onClick={handleSubmit}> Submit</button>
+            <button onClick={handleSubmitQuestion}> Submit</button>
           </form>
           <br />
           <form>
             <label>emergencyRepay</label>
-            <button
-              onClick={(e) => {
-                clickEmergencyRepay(e)
-              }}
-            >
-              {' '}
-              Emergency Repay
-            </button>
+            <button onClick={handleEmergencyRepay}> Emergency Repay</button>
           </form>
           <br />
           <form>
@@ -121,13 +145,7 @@ function Admin() {
               placeholder="Enter password"
               onChange={(e) => setRevealPassword(e.target.value)}
             />
-            <button
-              onClick={(e) => {
-                clickReveal(e)
-              }}
-            >
-              Reveal
-            </button>
+            <button onClick={clickReveal}>Reveal</button>
             {message}
           </form>
         </div>

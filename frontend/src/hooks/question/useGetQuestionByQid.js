@@ -8,15 +8,11 @@ export const getQuestionById = async (id) => {
     const response = await axios.get(API_URL + id)
     return response.data
   } catch (error) {
-    return (
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString()
-    )
+    throw error
   }
 }
 
-export default function useGetQuestion(id, setQuestion) {
+export default function UseGetQuestionByQid(id, setQuestion) {
   return useQuery({
     queryKey: ['question', id],
     queryFn: () => getQuestionById(id),

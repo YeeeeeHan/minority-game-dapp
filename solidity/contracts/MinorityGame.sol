@@ -108,6 +108,7 @@ contract MinorityGame {
                 // Fault in commit-reveal scheme
                 emergencyRepay();
                 return;
+
             }
         }
 

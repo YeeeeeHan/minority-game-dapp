@@ -3,7 +3,7 @@ import Option from './Option'
 import CircularProgress from '@mui/material/CircularProgress'
 import HistoricalQuestions from './HistoricalQuestions'
 import React, { useEffect, useState } from 'react'
-import useGetQuestion from '../hooks/question/useGetQuestion'
+import UseGetQuestionByQid from '../hooks/question/useGetQuestionByQid'
 import { alchemyGameContract } from '../ethers'
 
 function QuestionCard({ qid, date, submitVote, message, history }) {
@@ -11,7 +11,7 @@ function QuestionCard({ qid, date, submitVote, message, history }) {
   const [participants, setParticipants] = useState(0)
 
   // Hook to get question details by Qid
-  useGetQuestion(qid, setQuestion)
+  UseGetQuestionByQid(qid, setQuestion)
 
   // useEffect to change participant number when user has successfully voted. The dependency array is
   // the message variable.

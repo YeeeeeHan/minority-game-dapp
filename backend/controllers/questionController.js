@@ -5,24 +5,25 @@ const Question = require('../models/questionModel')
 // @route   POST /api/question
 // @access  Public
 const createQuestion = asyncHandler(async (req, res) => {
-  const { qid, question, option0, option1, salt, duration } = req.body
+  const { question, option0, option1, salt, duration } = req.body
 
-  if (!qid || !question || !option0 || !option1 || !salt || !duration) {
+  if (
+    question === undefined ||
+    option0 === undefined ||
+    option1 === undefined ||
+    salt === undefined ||
+    duration === undefined
+  ) {
     res.status(400)
     throw new Error('Please add all fields')
   }
 
-  // Check if qid exists
-  const qidExists = await Question.findOne({ qid })
+  const largestQidQuestion = await Question.find().sort({ qid: -1 }).limit(1)
+  const largestQid = largestQidQuestion[0].qid
 
-  if (qidExists) {
-    res.status(400)
-    throw new Error(`Qid ${qid} already exists`)
-  }
-
-  // Create question
+  // Create question with auto-incremented qid
   const q = await Question.create({
-    qid,
+    qid: largestQid + 1,
     question,
     option0,
     option1,
@@ -46,6 +47,16 @@ const createQuestion = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc    Get largest qid in database
+// @route   GET /api/question
+// @access  Public
+const getAllQuestions = asyncHandler(async (req, res) => {
+  const allQuestions = await Question.find()
+
+  // Return results
+  res.status(201).json(allQuestions)
+})
+
 // @desc    Get question by qid
 // @route   GET /api/question/:qid
 // @access  Public
@@ -63,4 +74,28 @@ const getQuestionByQid = asyncHandler(async (req, res) => {
 module.exports = {
   createQuestion,
   getQuestionByQid,
+}
+
+// @desc    Get largest qid in database
+// @route   GET /api/question/largestqid
+// @access  Public
+const getLargestQid = asyncHandler(async (req, res) => {
+  const question = await Question.find().sort({ qid: -1 }).limit(1)
+
+  if (!question) {
+    res.status(400)
+    throw new Error('largest qid not found')
+  }
+
+  const largestQid = question[0].qid
+
+  // Return results
+  res.status(201).json(largestQid)
+})
+
+module.exports = {
+  createQuestion,
+  getQuestionByQid,
+  getLargestQid,
+  getAllQuestions,
 }
