@@ -1,11 +1,17 @@
-import React from "react";
-import "./Question.css";
-import IndividualHistoricalQuestion from "./IndividualHistoricalQuestion";
+import React from 'react'
+import './Question.css'
+import IndividualHistoricalQuestion from './IndividualHistoricalQuestion'
 
 function HistoricalQuestions({ history }) {
   return history.map((question) => {
-    return <IndividualHistoricalQuestion question={question} />;
-  });
+    return (
+      <>
+        <IndividualHistoricalQuestion question={question} />
+        <br/>
+        <br/>
+      </>
+    )
+  })
 }
 
-export default HistoricalQuestions;
+export default HistoricalQuestions

@@ -9,10 +9,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Admin from './pages/Admin'
 
-
 import { Web3ReactProvider } from '@web3-react/core'
-import {MetamaskProvider} from './providers/metamask'
+import { MetamaskProvider } from './providers/metamask'
 import { Web3Provider } from '@ethersproject/providers'
+import { useEffect } from 'react'
 
 function getLibrary(provider) {
   const library = new Web3Provider(provider)

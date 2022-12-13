@@ -47,6 +47,29 @@ const createQuestion = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc    Update question result
+// @route   PUT /api/question/
+// @access  Public
+const updateQuestionResult = asyncHandler(async (req, res) => {
+  const { qid, result } = req.body
+
+  let question = await Question.findOne({ qid })
+  if (!question) {
+    res.status(400)
+    throw new Error('Qid not found')
+  }
+
+  question.result = result
+  Question.updateOne({ qid: qid }, { result: result }, (error) => {
+    if (error) {
+      res.status(400)
+      throw new Error('Update result error')
+    } else {
+      res.status(201).json({ message: `updated question ${qid}`, question })
+    }
+  })
+})
+
 // @desc    Get largest qid in database
 // @route   GET /api/question
 // @access  Public
@@ -93,9 +116,59 @@ const getLargestQid = asyncHandler(async (req, res) => {
   res.status(201).json(largestQid)
 })
 
+// @desc    Get questions by page
+// @route   GET /api/question/page
+// @access  Public
+const getHistoryPagesQuestions = asyncHandler(async (req, res) => {
+  // const { page, currQid } = req.body
+  //
+  // // Get the current page from the query string
+  // const pageNum = parseInt(page) || 1
+  // const currQidNum = parseInt(currQid)
+  //
+  // // Get largest qid
+  // const question = await Question.find().sort({ qid: -1 }).limit(1)
+  // const largestQid = question[0].qid
+  //
+  // // Offset from largest qid to currQid
+  // const offset = largestQid - currQidNum + 1
+  //
+  // // Set the number of users to display per page
+  // const perPage = 3
+  //
+  // // Calculate the number of documents to skip
+  // const skip = offset + (pageNum - 1) * perPage
+
+  // Get the currQid from the query string
+  const { currQid } = req.body
+  const currQidNum = parseInt(currQid)
+
+  // Get largest qid
+  const question = await Question.find().sort({ qid: -1 }).limit(1)
+  const largestQid = question[0].qid
+
+  // Calculate skip from largestQid
+  const skip = largestQid - currQidNum
+
+  // Set the number of users to display per page
+  const perPage = 3
+
+  // Get the users on the current page
+  const pagedQuestions = await Question.find()
+    .sort({ qid: 'desc' })
+    .skip(skip)
+    .limit(perPage)
+    .exec()
+
+  // Return results
+  res.status(201).json(pagedQuestions)
+})
+
 module.exports = {
   createQuestion,
   getQuestionByQid,
   getLargestQid,
   getAllQuestions,
+  getHistoryPagesQuestions,
+  updateQuestionResult,
 }

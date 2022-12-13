@@ -13,10 +13,11 @@ import useContractCreateVote from '../hooks/ethereum/useContractCreateVote'
 import { toast } from 'react-toastify'
 import { useAtom } from 'jotai'
 import { mmGameContractAtom } from '../app/store'
-import UseContractReveal from "../hooks/ethereum/useContractReveal";
-import UseGetVotesByQid from "../hooks/vote/useGetVotesByQid";
-import UseGetQuestionByQid from "../hooks/question/useGetQuestionByQid";
-import {alchemyGameContract} from "../ethers";
+import UseContractReveal from '../hooks/ethereum/useContractReveal'
+import UseGetVotesByQid from '../hooks/vote/useGetVotesByQid'
+import UseGetQuestionByQid from '../hooks/question/useGetQuestionByQid'
+import { alchemyGameContract } from '../ethers'
+import { UsePostUpdateResult } from '../hooks/question/useUpdateQuestionResult'
 
 function Admin() {
   const [questionDetails, setQuestionDetails] = useState({})
@@ -29,8 +30,9 @@ function Admin() {
   // Sending votes to Contract
   const { mutate: mutateCreateQuestion } = UsePostQuestion()
   const { mutate: mutateEmergencyRepay } = UseContractEmergencyRepay()
-  const { mutate: mutateReveal } = UseContractReveal()
-  const {data} = UseGetVotesByQid(qid)
+  const { mutateAsync: mutateReveal } = UseContractReveal()
+  const { mutateAsync: mutateResult } = UsePostUpdateResult()
+  const { data } = UseGetVotesByQid(qid)
 
   // Emergency refunds all funds manually by administrator
   async function handleEmergencyRepay(e) {
@@ -59,12 +61,30 @@ function Admin() {
       return
     }
     setMessage('Waiting on reveal transaction...')
-    console.log("@@@@@@@@@@ data.votes", data.votes)
-    const voteArray = data.votes.map(elem => {
+    console.log('@@@@@@@@@@ data.votes', data.votes)
+    const voteArray = data.votes.map((elem) => {
       return [elem.address, elem.option, elem.unix, elem.salt]
     })
-    console.log("@@@@@@@@@@ voteArray", voteArray)
-    mutateReveal({voteArray, mmGameContract})
+    console.log('@@@@@@@@@@ voteArray', voteArray)
+
+    let opt0Count = 0
+    let opt1Count = 0
+    for (const v of voteArray) {
+      console.log(`v ${v}`)
+      console.log(`is true? ${v[1] === 0}`)
+      console.log(`type? ${typeof v.option}`)
+      if (v[1] === 0) {
+        opt0Count++
+        console.log(`opt0Count ${opt0Count}`)
+      } else {
+        opt1Count++
+        console.log(`opt1Count ${opt1Count}`)
+      }
+    }
+    const result = (opt0Count * 100) / (opt0Count + opt1Count)
+
+    await mutateResult({ qid, result: result.toFixed(2) })
+    await mutateReveal({ voteArray, mmGameContract })
     setMessage('')
   }
 

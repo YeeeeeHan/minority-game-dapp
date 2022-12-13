@@ -35,7 +35,10 @@ function QuestionCard({ qid, date, submitVote, message, history }) {
             <div className="question-date">{date}</div>
             <div className="question-option">
               <h1>
-                <Question participants={participants} content={question.question} />
+                <Question
+                  participants={participants}
+                  content={question.question}
+                />
               </h1>
               <div className="daily-option">
                 <Option
@@ -58,10 +61,6 @@ function QuestionCard({ qid, date, submitVote, message, history }) {
                 )}
               </div>
             </div>
-          </div>
-          <div className="historical-container">
-            <div className="history">History</div>
-            <HistoricalQuestions history={history} />
           </div>
         </div>
       )}

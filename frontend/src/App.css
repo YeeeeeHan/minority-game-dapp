@@ -73,6 +73,7 @@ body:active {
 }
 .daily-container .question-option {
   height: 50vh;
+  width: 70vw;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
