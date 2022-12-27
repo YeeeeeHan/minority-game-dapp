@@ -2,14 +2,14 @@ body {
   font-family: Helvetica Neue, Helvetica, Arial, Sans-Serif;
   line-height: 130%;
   font-weight: 400;
-  cursor: url("../public/cursor.png") 15 15, auto;
+  cursor: url('../public/cursor.png') 15 15, auto;
   margin: 0;
   height: 100%;
   white-space: normal;
 }
 
 body:active {
-  cursor: url("../public/cursor4.png") 12 12, auto;
+  cursor: url('../public/cursor4.png') 12 12, auto;
   transition-duration: 0.5s;
   transition-timing-function: ease-out;
 }
@@ -94,13 +94,13 @@ body:active {
 }
 
 .color1 {
-  background-color: rgb(136, 79, 186);
-  box-shadow: 0px 0px 30px rgb(136, 79, 186);
+  background-color: rgb(163, 113, 255);
+  box-shadow: 0px 0px 30px rgb(163, 113, 255);
 }
 
 .color2 {
-  background-color: rgb(115, 95, 255);
-  box-shadow: 0px 0px 30px rgb(115, 95, 255);
+  background-color: rgb(134, 218, 255);
+  box-shadow: 0px 0px 30px rgb(134, 218, 255);
 }
 
 .color3 {
@@ -109,46 +109,31 @@ body:active {
 }
 
 .color4 {
-  background-color: rgb(23, 166, 90);
-  box-shadow: 0px 0px 30px rgb(23, 166, 90);
+  background-color: rgb(131, 241, 183);
+  box-shadow: 0px 0px 30px rgb(131, 241, 183);
 }
 .color5 {
-  background-color: rgb(23, 97, 166);
-  box-shadow: 0px 0px 30px rgb(23, 97, 166);
+  background-color: rgb(143, 200, 255);
+  box-shadow: 0px 0px 30px rgb(143, 200, 255);
 }
 .color6 {
-  background-color: rgb(166, 23, 111);
-  box-shadow: 0px 0px 30px rgb(166, 23, 111);
+  background-color: rgb(245, 102, 189);
+  box-shadow: 0px 0px 30px rgb(245, 102, 189);
 }
 
 .color7 {
-  background-color: rgb(166, 23, 35);
-  box-shadow: 0px 0px 30px rgb(166, 23, 35);
+  background-color: rgb(255, 95, 110);
+  box-shadow: 0px 0px 30px rgb(255, 95, 110);
 }
 
 .color8 {
-  background-color: rgb(166, 154, 23);
-  box-shadow: 0px 0px 30px rgb(166, 154, 23);
+  background-color: rgb(255, 243, 111);
+  box-shadow: 0px 0px 30px rgb(255, 243, 111);
 }
 
 .color9 {
-  background-color: rgb(23, 166, 142);
-  box-shadow: 0px 0px 30px rgb(23, 166, 142);
-}
-
-.color10 {
-  background-color: rgb(78, 23, 166);
-  box-shadow: 0px 0px 30px rgb(78, 23, 166);
-}
-
-.color11 {
-  background-color: rgb(23, 123, 166);
-  box-shadow: 0px 0px 30px rgb(23, 123, 166);
-}
-
-.color12 {
-  background-color: rgb(23, 123, 166);
-  box-shadow: 0px 0px 30px rgb(23, 123, 166);
+  background-color: rgb(99, 255, 229);
+  box-shadow: 0px 0px 30px rgb(99, 255, 229);
 }
 
 .historical-container {

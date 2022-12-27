@@ -12,7 +12,10 @@ import Admin from './pages/Admin'
 import { Web3ReactProvider } from '@web3-react/core'
 import { MetamaskProvider } from './providers/metamask'
 import { Web3Provider } from '@ethersproject/providers'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import PrivateRoutes from './pages/PrivateRoutes'
+import { useAtom } from 'jotai'
+import { mmSignerAtom } from './app/store'
 
 function getLibrary(provider) {
   const library = new Web3Provider(provider)
@@ -21,6 +24,17 @@ function getLibrary(provider) {
 }
 
 function App() {
+  const [mmSigner, setMmSigner] = useAtom(mmSignerAtom)
+  const [adminAddr, setAdminAddr] = useState()
+
+  useEffect(async () => {
+    if (mmSigner === undefined) {
+      return
+    }
+    const addr = await mmSigner.getAddress()
+    setAdminAddr(addr)
+  }, [mmSigner])
+
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -38,13 +52,12 @@ function App() {
               <Header />
               <div className="container">
                 <Routes>
-                  {/*<Route path="/" element={<Dashboard />} />*/}
-                  {/*<Route path="/login" element={<Login />} />*/}
-                  {/*<Route path="/register" element={<Register />} />*/}
+                  <Route element={<PrivateRoutes addr={adminAddr} />}>
+                    <Route exact path="/admin" element={<Admin />} />
+                  </Route>
                   <Route path="/connectwallet" element={<ConnectWallet />} />
                   <Route path="/signin" element={<SigninSide />} />
                   <Route path="/" element={<Homepage />} />
-                  <Route exact path="/admin" element={<Admin />} />
                 </Routes>
               </div>
               <ReactQueryDevtools initialIsOpen={false} />

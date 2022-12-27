@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 
 import { InjectedConnector } from '@web3-react/injected-connector'
@@ -48,6 +48,10 @@ export function MetamaskProvider({ children }) {
   // Update global signer and gameContract whenever deps change
   useEffect(() => {
     ;(async () => {
+      // Skip effect if library is not initialised
+      if (library === undefined) {
+        return
+      }
       const mmSigner = await library.getSigner()
       const mmGameContract = await new ethers.Contract(
         process.env.REACT_APP_GAME_CONTRACT,
@@ -55,6 +59,7 @@ export function MetamaskProvider({ children }) {
         mmSigner
       )
       setMmGameContract(mmGameContract)
+      console.log("MMSIGNER SET in metasmask.js")
       setMmSigner(mmSigner)
     })()
   }, [library, active])

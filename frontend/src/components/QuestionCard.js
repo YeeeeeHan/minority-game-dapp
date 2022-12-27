@@ -1,7 +1,6 @@
 import Question from './Question'
 import Option from './Option'
 import CircularProgress from '@mui/material/CircularProgress'
-import HistoricalQuestions from './HistoricalQuestions'
 import React, { useEffect, useState } from 'react'
 import UseGetQuestionByQid from '../hooks/question/useGetQuestionByQid'
 import { alchemyGameContract } from '../ethers'

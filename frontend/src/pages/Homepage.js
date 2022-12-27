@@ -13,13 +13,11 @@ import { toast } from 'react-toastify'
 import UseGetInfiniteQuestion, {
   getQuestionsByPage,
 } from '../hooks/question/useGetInfiniteQuestion'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { getQuestionById } from '../hooks/question/useGetQuestionByQid'
-import HistoricalQuestions from '../components/HistoricalQuestions'
+import IndividualHistoricalQuestion from "../components/IndividualHistoricalQuestion";
 
 function Homepage() {
-  const [mmSigner, setMmSigner] = useAtom(mmSignerAtom)
-  const [mmGameContract, setMmGameContract] = useAtom(mmGameContractAtom)
+  const [mmSigner] = useAtom(mmSignerAtom)
+  const [mmGameContract] = useAtom(mmGameContractAtom)
 
   const dateOptions = { day: 'numeric', month: 'numeric', year: 'numeric' }
   const [date] = useState(
@@ -67,7 +65,7 @@ function Homepage() {
       pageData = page
     })
 
-    setHistory((prevState) => [...history, ...pageData])
+    setHistory(() => [...history, ...pageData])
   }, [infiniteData])
 
   // Triggers upon scrolls and hasNextPage change
@@ -128,8 +126,12 @@ function Homepage() {
     }
   }
 
-  console.log('pages123   ', history, hasNextPage, infiniteData)
-
+  // Getting different colours for background
+  function getRandomInt(min, max) {
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    return Math.floor(Math.random() * (max - min) + min) //The maximum is exclusive and the minimum is inclusive
+  }
   return (
     <div>
       <div className="App">
@@ -150,7 +152,11 @@ function Homepage() {
       </div>
       <div className="historical-container">
         <div className="history">History</div>
-        <HistoricalQuestions history={history}/>
+        {history.map((question) => {
+          return (
+                <IndividualHistoricalQuestion question={question} key={question.qid}  color={getRandomInt(1,10)} />
+          )
+        })}
       </div>
     </div>
   )

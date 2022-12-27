@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Question.css'
 
-function IndividualHistoricalQuestion({ question }) {
+function IndividualHistoricalQuestion({ question, color }) {
   const [clickedReveal, setClickedReveal] = useState(false)
+  const [colorChoice, setColorChoice] = useState()
 
   // Handling clicking of historical option
   function handleClick(e) {
@@ -10,16 +11,13 @@ function IndividualHistoricalQuestion({ question }) {
     setClickedReveal(true)
   }
 
-  // Getting different colours for background
-  function getRandomInt(min, max) {
-    min = Math.ceil(min)
-    max = Math.floor(max)
-    return Math.floor(Math.random() * (max - min) + min) //The maximum is exclusive and the minimum is inclusive
-  }
+  useEffect(() => {
+    setColorChoice(color)
+  }, [])
 
   return (
     <div className="main-container">
-      <div className={`daily-container color${3}`}>
+      <div className={`daily-container color${colorChoice}`}>
         <div className="question-option">
           <h1>
             <div className="daily-question">
@@ -69,6 +67,10 @@ function IndividualHistoricalQuestion({ question }) {
           )}
         </div>
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   )
 }
